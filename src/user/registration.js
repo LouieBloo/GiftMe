@@ -22,7 +22,6 @@ module.exports.handler = async (req, res, next) => {
 
   //save the user
   await newUser.save().then(async (data, err) => {
-    console.log(data)
     if (err) {
       throw ({ error: err });
     }

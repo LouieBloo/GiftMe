@@ -13,7 +13,7 @@ var connectDatabase = function () {
       connectionString = dbConfig.fullProductionURL;
     }
 
-    mongoose.connect(connectionString, { useNewUrlParser: true }).then(function () {
+    mongoose.connect(connectionString, {useCreateIndex: true, useNewUrlParser: true,useUnifiedTopology: true }).then(function () {
       console.log("Mongoose connected successfully <3");
       resolve();
     }).catch(function (error) {

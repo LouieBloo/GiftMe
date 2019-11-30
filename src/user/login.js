@@ -1,8 +1,5 @@
 var passport = require('passport');
-var mongoose = require('mongoose');
 const { check } = require('express-validator');
-
-var UserModel = mongoose.model('users');
 
 exports.validation = [
   check('password'),
@@ -12,7 +9,6 @@ exports.handler = function (req, res, next) {
   return new Promise(function (resolve, reject) {
 
     passport.authenticate('local', function (err, user, info) {
-      console.log("ASDFASDF")
       if (err) {
         reject({ status: 503, error: err });
       } else if (user) {//found a user, password matches!
