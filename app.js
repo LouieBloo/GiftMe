@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var passport = require('passport');
 var cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 require('./src/database/main-database').connect();
 require('./src/models/models')
@@ -27,8 +29,12 @@ app.use(cors());
 //passport init always before routing
 app.use(passport.initialize());
 
+//routing
 const router = require('./routes/router');
 app.use('/', router);
+
+router.use('/api-docs', swaggerUi.serve);
+router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -43,7 +49,10 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json({
+    error : err,
+    status: err.status
+  })
 });
 
 module.exports = app;

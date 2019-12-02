@@ -17,6 +17,7 @@ module.exports = function (route) {
       await route.handler(req, res, next).then(async (response) => {
         return res.status(response.status ? response.status : 200).json(response.response);
       }).catch(async (error) => {
+        console.log(error)
         return res.status(error.status ? error.status : 503).json({error: error.error});
       })
     },
