@@ -32,7 +32,6 @@ app.use(passport.initialize());
 //routing
 const router = require('./routes/router');
 app.use('/', router);
-
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerDocument));
 

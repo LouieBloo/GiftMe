@@ -13,13 +13,9 @@ module.exports.handler = async (req, res, next) => {
   newList.owner = req.credentials._id;
 
   //save the user
-  let createdList = await newList.save().then(async (data, err) => {
-    if (err) {
-      throw ({error: err });
-    }
+  let createdList = await newList.save().then(async (data) => {
     return data;
   }).catch(async (err) => {
-    console.log(err);
     throw ({ error: err })
   });
 

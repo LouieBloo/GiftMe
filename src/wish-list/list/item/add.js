@@ -24,6 +24,7 @@ module.exports.handler = async (req, res, next) => {
 
   //create the new list item
   let newItem = new ItemModel();
+  newItem.owner = req.credentials._id;
   newItem.name = req.validParams.name;
 
   if(req.validParams.link){
@@ -31,22 +32,15 @@ module.exports.handler = async (req, res, next) => {
   }
 
   //save the new item
-  let createdItem = await newItem.save().then(async (data, err) => {
-    if (err) {
-      throw ({error: err });
-    }
+  let createdItem = await newItem.save().then(async (data) => {
     return data;
   }).catch(async (err) => {
-    console.log(err);
     throw ({ error: err })
   });
 
   //attach new item to list
   targetList.items.push(createdItem._id);
-  await targetList.save().then(async(data,err)=>{
-    if (err) {
-      throw ({error: err });
-    }
+  await targetList.save().then(async(data)=>{
   }).catch(async (err) => {
     throw ({ error: err })
   });
