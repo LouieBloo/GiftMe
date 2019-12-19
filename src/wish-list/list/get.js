@@ -24,7 +24,7 @@ module.exports.handler = async (req, res, next) => {
   .populate('owner',{
     name: 1,
   })
-  .populate('items')
+  .populate({path:'items',populate:{path:'claimedUser',select:{'name':1}}})
   .then(async(data, err) => {
     if (err) {
       throw ({ error: err })
