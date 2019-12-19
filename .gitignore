@@ -59,4 +59,4 @@ typings/
 
 # next.js build output
 .next
-./config/main-app-config.js
+config/main-app-config.js
