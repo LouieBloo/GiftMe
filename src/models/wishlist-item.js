@@ -6,8 +6,10 @@ var schema = new Schema({
   link: {type:String},
   description: {type:String},
   owner:{type:Schema.Types.ObjectId,ref:'users',required:true},
-  claimedUser:{type:Schema.Types.ObjectId,ref:'users'},
-  claimedUserMessage:{type:String},
+  claimedUser:{
+    _id:{type:Schema.Types.ObjectId,ref:'users'},
+    message:{type:String},
+  },
   dateCreated:{type:Date,default:Date.now},
   dateClaimed:{type:Date},
 });

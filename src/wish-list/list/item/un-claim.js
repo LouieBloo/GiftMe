@@ -20,12 +20,11 @@ module.exports.handler = async (req, res, next) => {
 
   //dont let people who havne't claimed this unclaim its
   if(!targetItem.claimedUser || targetItem.claimedUser._id != req.credentials._id){
-    throw({status:405,error:"Cannot un-claim something you havne't claimed"});
+    throw({status:405,error:"Cannot un-claim something you haven't claimed"});
   }
 
-  //clear the claimed user and message
+  //clear the claimed user
   targetItem.claimedUser = undefined;
-  targetItem.claimedUserMessage = undefined;
 
   await targetItem.save().then(async(data)=>{
   }).catch(async (err) => {

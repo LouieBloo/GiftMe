@@ -26,13 +26,15 @@ module.exports.handler = async (req, res, next) => {
   }
 
   //item cant be claimed if its already claimed, unless force flag
-  if(targetItem.claimedUser && !req.validParams.force){
+  if(targetItem.claimedUser._id && !req.validParams.force){
     throw({status:405,error:"Item is already claimed"});
   }
 
-  targetItem.claimedUser = req.credentials._id;
+  targetItem.claimedUser = {
+    _id: req.credentials._id
+  }
   if(req.validParams.message){
-    targetItem.claimedUserMessage = req.validParams.message;
+    targetItem.claimedUser.message = req.validParams.message;
   }
 
   await targetItem.save().then(async(data)=>{
