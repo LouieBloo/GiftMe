@@ -41,7 +41,7 @@ const checkIfEmailExists = async (email) => {
     email: email
   }).then(async (data, err) => {
     if (data) {
-      throw ({ status: 403, error: "Email Exists" });
+      throw ({ status: 403, error: {email:{msg:"Email Exists" }}});
     }
   })
 }
