@@ -15,12 +15,14 @@ module.exports.handler = async (req, res, next) => {
     throw({error:err})
   })
 
-  await ItemModel.deleteMany({
-    owner : req.credentials._id,
-    _id : {$in:targetList.items}
-  }).catch(async(err)=>{
-    throw({error:err})
-  })
+  if(targetList && targetList.items){
+    await ItemModel.deleteMany({
+      owner : req.credentials._id,
+      _id : {$in:targetList.items}
+    }).catch(async(err)=>{
+      throw({error:err})
+    })
+  }
 
   await ListModel.deleteOne({
     _id : req.validParams.id,
