@@ -18,7 +18,7 @@ module.exports = function (route) {
         return res.status(response.status ? response.status : 200).json(response.response);
       }).catch(async (error) => {
         console.log(error)
-        return res.status(error.status ? error.status : 503).json({error: error.error});
+        return res.status(error.status ? error.status : 503).json(error.error);
       })
     },
   ]
