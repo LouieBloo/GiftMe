@@ -4,7 +4,8 @@ const { check } = require('express-validator');
 
 module.exports.validation = [
   check('id').trim().isLength({ min: 2, max: 60 }).withMessage("Id must be 2-60 characters long").optional(),
-  check('owner').trim().isLength({ min: 2, max: 60 }).withMessage("Owner must be 2-60 characters long").optional()
+  check('owner').trim().isLength({ min: 2, max: 60 }).withMessage("Owner must be 2-60 characters long").optional(),
+  check('sort').optional()
 ];
 module.exports.handler = async (req, res, next) => {
 
@@ -38,6 +39,7 @@ module.exports.handler = async (req, res, next) => {
           }
         }
       })
+    .sort(req.validParams.sort)
     .lean()
     .then(async (data, err) => {
       if (err) {

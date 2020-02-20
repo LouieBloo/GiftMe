@@ -16,7 +16,7 @@ const unClaimItem = require('../src/wish-list/list/item/un-claim');
 
 //list
 router.post('/', [tokenValidator], routeManager(createList));
-router.get('/', [tokenValidator], routeManager(getList));
+router.post('/query', [tokenValidator], routeManager(getList));
 router.get('/:id', [tokenValidator], routeManager(getList));
 router.delete('/:id', [tokenValidator], routeManager(deleteList));
 router.patch('/:id', [tokenValidator], routeManager(updateList));
