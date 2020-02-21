@@ -5,7 +5,8 @@ const { check } = require('express-validator');
 module.exports.validation = [
   check('id').trim().isLength({ min: 2, max: 60 }).withMessage("Id must be 2-60 characters long"),
   check('name').trim().isLength({ min: 2, max: 60 }).withMessage("Name must be 2-60 characters long").optional(),
-  check('link').trim().isURL().withMessage("Invalid link").optional()
+  check('link').trim().isURL().withMessage("Invalid link").optional(),
+  check('description').trim().isLength({ min: 2, max: 60 }).withMessage("Invalid Description").optional()
 ];
 module.exports.handler = async (req, res, next) => {
 
@@ -27,6 +28,9 @@ module.exports.handler = async (req, res, next) => {
   }
   if(req.validParams.link){
     targetItem.link = req.validParams.link;
+  }
+  if(req.validParams.description){
+    targetItem.description = req.validParams.description;
   }
 
   let updatedItem = await targetItem.save().then(async(data)=>{
