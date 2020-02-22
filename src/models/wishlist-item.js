@@ -10,6 +10,7 @@ var schema = new Schema({
     _id:{type:Schema.Types.ObjectId,ref:'users'},
     message:{type:String},
   },
+  icon:{type:String},
   dateCreated:{type:Date,default:Date.now},
   dateClaimed:{type:Date},
 });

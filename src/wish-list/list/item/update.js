@@ -5,8 +5,9 @@ const { check } = require('express-validator');
 module.exports.validation = [
   check('id').trim().isLength({ min: 2, max: 60 }).withMessage("Id must be 2-60 characters long"),
   check('name').trim().isLength({ min: 2, max: 60 }).withMessage("Name must be 2-60 characters long").optional(),
-  check('link').trim().isURL().withMessage("Invalid link").optional(),
-  check('description').trim().isLength({ min: 2, max: 60 }).withMessage("Invalid Description").optional()
+  check('link').trim().isURL().withMessage("Invalid link").optional({nullable:true}),
+  check('description').trim().isLength({ min: 2, max: 256 }).withMessage("Invalid Description").optional({nullable:true}),
+  check('icon').trim().isLength({ min: 2, max: 60 }).withMessage("Invalid Icon").optional({nullable:true})
 ];
 module.exports.handler = async (req, res, next) => {
 
@@ -26,12 +27,10 @@ module.exports.handler = async (req, res, next) => {
   if(req.validParams.name){
     targetItem.name = req.validParams.name;
   }
-  if(req.validParams.link){
-    targetItem.link = req.validParams.link;
-  }
-  if(req.validParams.description){
-    targetItem.description = req.validParams.description;
-  }
+
+  targetItem.link = req.validParams.link ? req.validParams.link : null;
+  targetItem.description = req.validParams.description ? req.validParams.description : null;
+  targetItem.icon = req.validParams.icon ? req.validParams.icon : null;
 
   let updatedItem = await targetItem.save().then(async(data)=>{
     return data;
