@@ -1,0 +1,1 @@
+module.exports.iconNames = ['card_giftcard','add_shopping_cart','face','favorite','grade'];

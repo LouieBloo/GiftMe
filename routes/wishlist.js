@@ -14,6 +14,8 @@ const deleteItem = require('../src/wish-list/list/item/delete');
 const claimItem = require('../src/wish-list/list/item/claim');
 const unClaimItem = require('../src/wish-list/list/item/un-claim');
 
+const getIcons = require('../src/wish-list/list/item/icons');
+
 //list
 router.post('/', [tokenValidator], routeManager(createList));
 router.post('/query', [tokenValidator], routeManager(getList));
@@ -26,5 +28,7 @@ router.patch('/item/:id',[tokenValidator],routeManager(updateItem));
 router.delete('/item/:id',[tokenValidator],routeManager(deleteItem));
 router.patch('/item/:id/claim',[tokenValidator],routeManager(claimItem));
 router.patch('/item/:id/unclaim',[tokenValidator],routeManager(unClaimItem));
+//items icons
+router.get('/item/icons',[tokenValidator],routeManager(getIcons));
 
 module.exports = router;

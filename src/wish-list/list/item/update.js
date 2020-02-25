@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const ItemModel = mongoose.model('wishlist_item');
 const { check } = require('express-validator');
+const IconWhitelist = require('../../../../config/icon-whitelist');
 
 module.exports.validation = [
   check('id').trim().isLength({ min: 2, max: 60 }).withMessage("Id must be 2-60 characters long"),
@@ -30,7 +31,11 @@ module.exports.handler = async (req, res, next) => {
 
   targetItem.link = req.validParams.link ? req.validParams.link : null;
   targetItem.description = req.validParams.description ? req.validParams.description : null;
-  targetItem.icon = req.validParams.icon ? req.validParams.icon : null;
+  
+  if(req.body.icon){
+    targetItem.icon = IconWhitelist.iconNames.includes(req.body.icon) ? req.body.icon : null;
+  }
+  
 
   let updatedItem = await targetItem.save().then(async(data)=>{
     return data;
