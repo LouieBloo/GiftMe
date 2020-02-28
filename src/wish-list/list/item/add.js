@@ -2,12 +2,14 @@ const mongoose = require('mongoose');
 const ItemModel = mongoose.model('wishlist_item');
 const ListModel = mongoose.model('wishlist');
 const { check } = require('express-validator');
+const IconWhitelist = require('../../../../config/icon-whitelist');
 
 module.exports.validation = [
-  check('name').trim().isLength({ min: 2, max: 60 }).withMessage("Name must be 2-60 characters long"),
+  check('name').trim().isLength({ min: 2, max: 75 }).withMessage("Name must be 2-60 characters long"),
   check('listId').trim().isLength({ min: 2, max: 60 }).withMessage("Invalid List Id"),
   check('link').trim().isURL().withMessage("Invalid link").optional(),
   check('description').trim().isLength({ min: 2, max: 60 }).withMessage("Invalid Description").optional(),
+  check('icon').trim().isLength({ min: 2, max: 60 }).withMessage("Invalid Icon").optional({nullable:true})
 ];
 module.exports.handler = async (req, res, next) => {
 
@@ -34,6 +36,9 @@ module.exports.handler = async (req, res, next) => {
   if(req.validParams.description){
     newItem.description = req.validParams.description;
   }
+  if(req.body.icon){
+    newItem.icon = IconWhitelist.iconNames.includes(req.body.icon) ? req.body.icon : null;
+  }
 
   //save the new item
   let createdItem = await newItem.save().then(async (data) => {
@@ -43,7 +48,7 @@ module.exports.handler = async (req, res, next) => {
   });
 
   //attach new item to list
-  targetList.items.push(createdItem._id);
+  targetList.items.unshift(createdItem._id);
   await targetList.save().then(async(data)=>{
   }).catch(async (err) => {
     throw ({ error: err })

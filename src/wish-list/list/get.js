@@ -16,8 +16,6 @@ module.exports.handler = async (req, res, next) => {
   }
   if (req.validParams.owner) {
     filter.owner = req.validParams.owner;
-  }else{
-    filter.owner = req.credentials._id;
   }
 
   //make sure we have at least 1 thing we are filtering by
