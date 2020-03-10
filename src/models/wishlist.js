@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var schema = new Schema({
-  name : {type:String,required:true},
+  name : {type:String},
   owner:{type:Schema.Types.ObjectId,ref:'users',required:true},
   items:[{type:Schema.Types.ObjectId,ref:'wishlist_item'}],
   address:{type:String},

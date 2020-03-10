@@ -5,6 +5,7 @@ const tokenValidator = require('../src/authentication/tokens')
 const routeManager = require('./route-manager')
 const createList = require('../src/wish-list/list/create')
 const getList = require('../src/wish-list/list/get')
+const getListExists = require('../src/wish-list/list/exists')
 const deleteList = require('../src/wish-list/list/delete')
 const updateList = require('../src/wish-list/list/update')
 
@@ -20,6 +21,7 @@ const getIcons = require('../src/wish-list/list/item/icons');
 router.post('/', [tokenValidator], routeManager(createList));
 router.post('/query', [tokenValidator], routeManager(getList));
 router.get('/:id', [tokenValidator], routeManager(getList));
+router.get('/:id/exists', [tokenValidator], routeManager(getListExists));
 router.delete('/:id', [tokenValidator], routeManager(deleteList));
 router.patch('/:id', [tokenValidator], routeManager(updateList));
 //item

@@ -31,10 +31,9 @@ module.exports.handler = async (req, res, next) => {
       {
         path: 'items',
         populate: {
+          model:'users',
           path: 'claimedUser',
-          select: {
-            'name': 1
-          }
+          select: {name:1}
         }
       })
     .sort(req.validParams.sort)
