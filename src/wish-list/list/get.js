@@ -47,19 +47,28 @@ module.exports.handler = async (req, res, next) => {
   });
   
   if(targetWishList != null && targetWishList.length > 0){
-    removeClaimedUserFromResponse(targetWishList,req.credentials._id)
+    removeClaimedUserFromResponse(targetWishList,req.credentials)
   }
 
   return { status: 200, response: targetWishList }
 }
 
 //Dont return any information about who has claimed an item if the list belongs to this user
-const removeClaimedUserFromResponse = function(wishlists,ownerId){
+const removeClaimedUserFromResponse = function(wishlists,credentials){
   wishlists.forEach(list=>{
-    if(list.owner._id == ownerId){
+    if(credentials && credentials._id && list.owner._id == credentials._id){
+      //if we are logged in and are the list owner, delete the claimed user so the list owner doesnt know who has claimed the item
       list.items.forEach(item=>{
         delete(item.claimedUserMessage);
         delete(item.claimedUser);
+      })
+    }else if(credentials && credentials._id && list.owner._id != credentials._id){
+      //if we are logged in and we are not the list owner do nothing. We want to see the claimed users if we are not the owner
+    }else{
+      //if we are not logged in than only show that there is a claimed user
+      list.items.forEach(item=>{
+        delete(item.claimedUserMessage);
+        item.claimedUser = item.claimedUser ? true : null;
       })
     }
   })
