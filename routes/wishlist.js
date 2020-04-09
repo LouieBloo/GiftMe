@@ -20,8 +20,8 @@ const getIcons = require('../src/wish-list/list/item/icons');
 //list
 router.post('/', [tokenValidator], routeManager(createList));
 router.post('/query', [tokenValidator], routeManager(getList));
-router.get('/:id', [tokenValidator.open],routeManager(getList));
-router.get('/:id/exists', [tokenValidator], routeManager(getListExists));
+router.get('/:id',[tokenValidator.open],tokenValidator.openPass,routeManager(getList));
+router.get('/:id/exists', [tokenValidator.open],tokenValidator.openPass, routeManager(getListExists));
 router.delete('/:id', [tokenValidator], routeManager(deleteList));
 router.patch('/:id', [tokenValidator], routeManager(updateList));
 //item

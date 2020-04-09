@@ -8,7 +8,6 @@ module.exports.validation = [
   check('sort').optional()
 ];
 module.exports.handler = async (req, res, next) => {
-
   //allow the GET request to handle a single wishlist or all wishlists for a user
   let filter = {};
   if (req.validParams.id) {

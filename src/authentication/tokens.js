@@ -14,3 +14,9 @@ module.exports.open = jwt({
   credentialsRequired:false,
   userProperty: 'credentials'
 });
+
+//This is ultra jank but works for the time being, swallowing the jwt error
+//https://github.com/auth0/express-jwt/issues/194
+module.exports.openPass = function(err,req,res,next){
+  next();
+} 
