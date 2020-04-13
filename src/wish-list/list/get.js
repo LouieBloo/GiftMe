@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const ListModel = mongoose.model('wishlist');
 const { check } = require('express-validator');
+const Engagement = require('../../engadgement/list/create');
 
 module.exports.validation = [
   check('id').trim().isLength({ min: 2, max: 60 }).withMessage("Id must be 2-60 characters long").optional(),
@@ -47,6 +48,11 @@ module.exports.handler = async (req, res, next) => {
   
   if(targetWishList != null && targetWishList.length > 0){
     removeClaimedUserFromResponse(targetWishList,req.credentials)
+  }
+
+  //create a view engagement for this list
+  if(targetWishList && targetWishList.length == 1){
+    Engagement.viewList(req,targetWishList[0]);
   }
 
   return { status: 200, response: targetWishList }
