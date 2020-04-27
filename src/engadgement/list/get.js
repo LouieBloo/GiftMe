@@ -16,7 +16,7 @@ module.exports.handler = async (req, res, next) => {
       }
     }, {
       '$group': {
-        '_id': '$list', 
+        '_id': '$list',
         'dateCreated': {
           '$max': '$dateCreated'
         }
@@ -32,7 +32,7 @@ module.exports.handler = async (req, res, next) => {
     if (err) {
       throw ({ error: err })
     }
-    if(!data || data.length == 0){
+    if (!data || data.length == 0) {
       return [];
     }
 
@@ -42,13 +42,22 @@ module.exports.handler = async (req, res, next) => {
 
     //we need to do another query to make it easier for us
     let wishlists = await WishlistModel.find({
-      _id:{$in:wishListIds}
-    },{_id:1,finishDate:1,name:1}).populate('owner', {
+      _id: {
+        $in: wishListIds
+      }
+    },{ 
+        _id: 1,
+        finishDate: 1,
+        name: 1,
+        items:1
+    }).populate('owner', {
       name: 1,
+    }).populate('items',{
+      name:1
     })
 
     return wishlists;
   });
-  
+
   return { status: 200, response: wishListIds }
 }
