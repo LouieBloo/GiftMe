@@ -7,5 +7,17 @@ module.exports.iconNames = [
   'event_seat',
   'flight_takeoff',
   'motorcycle',
-  'pets'
+  'pets',
+  'whatshot',
+  'fireplace',
+  'build',
+  'eco',
+  'store',
+  'touch_app',
+  'settings_input_component',
+  'work',
+  'av_timer',
+  'library_music',
+  'vpn_key',
+  'games'
 ];
