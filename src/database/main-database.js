@@ -10,7 +10,7 @@ var connectDatabase = function () {
       connectionString = mainConfig.database.url;
     } else {
       console.log("Mongo connection string: PRODUCTION")
-      connectionString = dbConfig.fullProductionURL;
+      connectionString = mainConfig.database.url;
     }
 
     mongoose.connect(connectionString, {useCreateIndex: true, useNewUrlParser: true,useUnifiedTopology: true }).then(function () {
