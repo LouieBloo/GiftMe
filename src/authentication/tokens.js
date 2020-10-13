@@ -6,11 +6,13 @@ const mainConfig = require('../../config/main-app-config');
 
 module.exports = jwt({
   secret: mainConfig.jwt.secret,
+  algorithms: ['RS256'],
   userProperty: 'credentials'
 });
 
 module.exports.open = jwt({
   secret: mainConfig.jwt.secret,
+  algorithms: ['RS256'],
   credentialsRequired:false,
   userProperty: 'credentials'
 });
