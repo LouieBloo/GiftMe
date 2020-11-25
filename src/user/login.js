@@ -22,7 +22,7 @@ exports.handler = function (req, res, next) {
       else {
         reject({status:401, error: {
           error: {
-            email: {
+            password: {
               msg: "Invalid password",
               param: "password",
               location: "body"
