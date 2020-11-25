@@ -20,7 +20,15 @@ exports.handler = function (req, res, next) {
         });
       }
       else {
-        reject({status:401, error: "Invalid email or password" });
+        reject({status:401, error: {
+          error: {
+            email: {
+              msg: "Invalid password",
+              param: "password",
+              location: "body"
+            }
+          }
+        } });
       }
     })(req, res,next);
   });
