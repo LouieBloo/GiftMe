@@ -3,6 +3,7 @@ const ItemModel = mongoose.model('wishlist_item');
 const ListModel = mongoose.model('wishlist');
 const { check } = require('express-validator');
 const IconWhitelist = require('../../../../config/icon-whitelist');
+const notificationService = require('../../../notifications/notification-service');
 
 module.exports.validation = [
   check('name').trim().isLength({ min: 2, max: 75 }).withMessage("Name must be 2-60 characters long"),
@@ -53,6 +54,10 @@ module.exports.handler = async (req, res, next) => {
   }).catch(async (err) => {
     throw ({ error: err })
   });
+
+
+  //tell notification service we have created an item
+  notificationService.itemCreated(createdItem,targetList);
 
   return {status:201,response:createdItem}
 }
