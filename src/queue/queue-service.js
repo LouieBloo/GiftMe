@@ -73,7 +73,6 @@ notificationQueue.process(async (job) => {
    * Delete the notifications?
    */
   let parsedNotification = await parseNotifications(targetList._id);
-  console.log(parsedNotification)
 
   //idk if we need this but keepin it for now
   return true;
@@ -85,7 +84,7 @@ notificationQueue.process(async (job) => {
  * @param {*} listId 
  */
 // {
-//   '5fc855e74b15d208c9e66072': {
+//   {
 //     action: 'update',
 //     item: {
 //       _id: 5fc855e74b15d208c9e66072,
@@ -127,7 +126,7 @@ const parseNotifications = async (listId) => {
   });
 
   //holds the final return of this function
-  let finalParsedObject = {};
+  let finalParsedObject = [];
   //makes deleting the notifications easier
   let notificationIds = [];
   //loop over each group (item)
@@ -151,33 +150,46 @@ const parseNotifications = async (listId) => {
     })
   }
 
-  await NotificationModel.deleteMany({_id:{$in:notificationIds}});
-  return finalParsedObject;
+  //delete notifications from db
+  await NotificationModel.deleteMany({ _id: { $in: notificationIds } });
+
+  return {
+    listId: listId,
+    parsedNotifications: finalParsedObject
+  }
 }
 
 //item created is easy, we just return the item that was created and the action of 'create'
 const parseItemCreated = (finalParsedObject, item) => {
   //since we have sorted by oldest first, there should never be an update before an add
-  finalParsedObject[item._id] = {
+  finalParsedObject.push({
     action: 'create',
     item: item
-  }
+  });
 }
 
 //update is harder as there could be X updates before we send the notification. We want the final payload
 //to show only the NEWEST update on each field
 const parseItemUpdated = (finalParsedObject, item, notification) => {
   let before = {};
+  //see if there is already a parsed notification for this item
+  let foundIndex = -1;
+  for (var i = 0; i < finalParsedObject.length; i++) {
+    if (finalParsedObject[i].item.id == item.id) {
+      foundIndex = i;
+      break;
+    }
+  }
   //check if we have already parsed this item in an update or create
-  if (finalParsedObject[item._id]) {
+  if (foundIndex >= 0) {
     //if this item has already been parsed and it was the create function we do nothing. The user only needs to see that the item was created, not that it
     //was created and updated 5 times
-    if (finalParsedObject[item._id].action == 'create') {
+    if (finalParsedObject[foundIndex].action == 'create') {
       //do nothing
       return;
     } else {
       //since there already is a before field use that one to work off of
-      before = finalParsedObject[item._id].before;
+      before = finalParsedObject[foundIndex].before;
     }
   }
 
@@ -187,10 +199,17 @@ const parseItemUpdated = (finalParsedObject, item, notification) => {
     //we clobber the stuff that is already there because the last notification of that type is the newest 
     before[key] = notification.data.diff[key].before;
   }
-  finalParsedObject[item._id] = {
+  
+  let newObject = {
     action: 'update',
     item: item,
     before: before
+  }
+  //if there is already a parsed notification we update, else push new
+  if(foundIndex >= 0){
+    finalParsedObject[foundIndex] = newObject;
+  }else{
+    finalParsedObject.push(newObject)
   }
 
 }
