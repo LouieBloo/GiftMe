@@ -17,10 +17,15 @@ var schema = new Schema({
 });
 
 schema.methods.addSubscriber = function (userId) {
-  if(this.subscribers.some(e => e.userId == userId)){
-  }else{
+  if(!this.subscribers.some(e => e.userId == userId)){
     this.subscribers.push({userId:new ObjectId(userId)})
   }
+};
+
+schema.methods.removeSubscriber = function (userId) {
+  console.log(this.subscribers)
+  console.log(userId)
+  this.subscribers = this.subscribers.filter(subscriber => subscriber.userId != userId);
 };
 
 module.exports = mongoose.model('wishlist',schema);

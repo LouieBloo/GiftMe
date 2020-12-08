@@ -15,6 +15,9 @@ const deleteItem = require('../src/wish-list/list/item/delete');
 const claimItem = require('../src/wish-list/list/item/claim');
 const unClaimItem = require('../src/wish-list/list/item/un-claim');
 
+const addSubscriber = require('../src/wish-list/list/subscribers/add-subscriber');
+const deleteSubscriber = require('../src/wish-list/list/subscribers/delete-subscriber');
+
 const getIcons = require('../src/wish-list/list/item/icons');
 
 //list
@@ -32,5 +35,8 @@ router.patch('/item/:id/claim',[tokenValidator],routeManager(claimItem));
 router.patch('/item/:id/unclaim',[tokenValidator],routeManager(unClaimItem));
 //items icons
 router.get('/item/icons',routeManager(getIcons));
+//subscribers
+router.post('/:id/subscriber',[tokenValidator],routeManager(addSubscriber));
+router.delete('/:id/subscriber',[tokenValidator],routeManager(deleteSubscriber));
 
 module.exports = router;
