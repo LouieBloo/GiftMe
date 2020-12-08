@@ -11,7 +11,7 @@ const itemDelayTimeInSeconds = 2;
  * takes in a listId, will check to see if something is queued for that list and queues it if there is not, or restarts it if there is
  * @param {} listId
  */
-module.exports.itemDiff = async (listId) => {
+module.exports.listUpdated = async (listId) => {
 
   //check if the listId already has a notification queue id
   let targetList = await ListModel.findOne({
@@ -62,9 +62,9 @@ notificationQueue.process(async (job) => {
   }).catch(async (err) => {
     console.log("process notification error: ", err)
   });
-  //set the lists pending notification id to null so itemDiff knows 
+  //set the lists pending notification id to null so listUpdated knows 
   targetList.pendingNotificationJobId = null;
-  await targetList.save();
+  targetList = await targetList.save();
 
   /**
    * Get all notifications for this list
@@ -72,14 +72,62 @@ notificationQueue.process(async (job) => {
    * Send the email to the subscribers
    * Delete the notifications?
    */
-  let parsedNotification = await parseNotifications(targetList._id);
+  let parsedNotifications = await parseNotifications(targetList);
+  console.log(parsedNotifications)
 
   //idk if we need this but keepin it for now
   return true;
 });
 
+//call our respective parsers and join together their output
+const parseNotifications = async (list) => {
+  let allParsedNotifications = {
+    list: list,
+    listNotifications: null,
+    itemNotifications: null
+  };
+
+  let parsedItemNotifications = await parseItemNotifications(list._id);
+  allParsedNotifications.itemNotifications = parsedItemNotifications;
+
+  let parsedListNotifications = await parseListNotifications(list);
+  allParsedNotifications.listNotifications = parsedListNotifications;
+
+  //delete notifications from db
+  await NotificationModel.deleteMany({ "data.listId": new ObjectId(list._id) });
+
+  return allParsedNotifications;
+}
+
+const parseListNotifications = async (list) => {
+  //find all notifications that belong to this list
+  let listNotifications = await NotificationModel.find({
+    "data.listId": new ObjectId(list._id),
+    type: {
+      $in: ['list-updated']
+    }
+  }).sort({ dateCreated: 1 })//sort by oldest first, makes our logic easier down the line
+
+  if(!listNotifications){return null;}
+  //since we only have 1 list for this list, we have 1 final object
+  let finalObject = {
+    action: 'update',
+    before: {}
+  }
+  listNotifications.forEach(notification => {
+    //we are looping but there should only be 1 key in the diff
+    for (let key in notification.data.diff) {
+      //clobber anything that was already there or add it if its new
+      //we clobber the stuff that is already there because the last notification of that type is the newest 
+      finalObject.before[key] = notification.data.diff[key].before;
+    }
+  })
+
+  return [finalObject];
+}
+
 /**
- * Parses all notifications for a given list id
+ * Parses all item notifications for a given list id
  * Below is an example payload of the parsing of ONE item in the list
  * @param {*} listId 
  */
@@ -104,9 +152,8 @@ notificationQueue.process(async (job) => {
  * it was an update or create. Create will look similar but will NOT have a before field because its brand new.
  * 
  * The final return will be an object with many keys. Each key being an item id
- * Also deletes the notifications
  */
-const parseNotifications = async (listId) => {
+const parseItemNotifications = async (listId) => {
   //find all notifications that belong to this list
   let itemNotifications = await NotificationModel.find({
     "data.listId": new ObjectId(listId),
@@ -127,8 +174,6 @@ const parseNotifications = async (listId) => {
 
   //holds the final return of this function
   let finalParsedObject = [];
-  //makes deleting the notifications easier
-  let notificationIds = [];
   //loop over each group (item)
   for (let key in groupedItemNotifications) {
     let itemId = key;//conveniance
@@ -146,17 +191,10 @@ const parseNotifications = async (listId) => {
       } else if (notification.type == 'item-updated') {
         parseItemUpdated(finalParsedObject, item, notification)
       }
-      notificationIds.push(notification._id)
     })
   }
 
-  //delete notifications from db
-  await NotificationModel.deleteMany({ _id: { $in: notificationIds } });
-
-  return {
-    listId: listId,
-    parsedNotifications: finalParsedObject
-  }
+  return finalParsedObject;
 }
 
 //item created is easy, we just return the item that was created and the action of 'create'
@@ -199,16 +237,16 @@ const parseItemUpdated = (finalParsedObject, item, notification) => {
     //we clobber the stuff that is already there because the last notification of that type is the newest 
     before[key] = notification.data.diff[key].before;
   }
-  
+
   let newObject = {
     action: 'update',
     item: item,
     before: before
   }
   //if there is already a parsed notification we update, else push new
-  if(foundIndex >= 0){
+  if (foundIndex >= 0) {
     finalParsedObject[foundIndex] = newObject;
-  }else{
+  } else {
     finalParsedObject.push(newObject)
   }
 

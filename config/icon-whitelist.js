@@ -15,7 +15,6 @@ module.exports.iconNames = [
   'whatshot',
   'fireplace',
   'build',
-  'shopping_card',
   'eco',
   'store',
   'touch_app',
