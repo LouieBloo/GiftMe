@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var mainConfig = require('../../config/main-app-config');
+const mongoose = require('mongoose');
+const mainConfig = require('../../config/main-app-config');
 
 var connectDatabase = function () {
   return new Promise(function (resolve, reject) {

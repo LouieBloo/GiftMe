@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const UserModel = mongoose.model('users');
 const ListModel = mongoose.model('wishlist');
 const { check } = require('express-validator');
+const notificationService = require('../../notifications/notification-service');
 
 module.exports.validation = [
   check('id').trim().isLength({ min: 2, max: 60 }).withMessage("Id must be 2-60 characters long"),
@@ -15,6 +16,9 @@ module.exports.handler = async (req, res, next) => {
     owner : req.credentials._id,
     _id : req.validParams.id
   })
+
+  //save a copy so we can diff it later
+  let copy = JSON.parse(JSON.stringify(targetList));
 
   if(targetList == null){
     throw({status:400,error:"Target List not found"})
@@ -39,6 +43,8 @@ module.exports.handler = async (req, res, next) => {
   }).catch(async(err)=>{
     throw({status:503,error:err})
   })
+
+  notificationService.listUpdated(updatedList,copy);
 
   return {status:201,response:updatedList}
 }
