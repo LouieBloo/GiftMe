@@ -67,10 +67,9 @@ notificationQueue.process(async (job) => {
   targetList = await targetList.save();
 
   /**
-   * Get all notifications for this list
-   * Parse them in some meaningful manner
-   * Send the email to the subscribers
-   * Delete the notifications?
+   * 1. Get all notifications for this list
+   * 2. Parse them in some meaningful manner then delete them
+   * 3. Send the email to the subscribers
    */
   let parsedNotifications = await parseNotifications(targetList);
   console.log(parsedNotifications)
