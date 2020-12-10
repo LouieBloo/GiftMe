@@ -10,5 +10,8 @@ module.exports = {
     port:process.env.REDIS_PORT,
     password:process.env.REDIS_PASSWORD
   },
-  sendingNotifications:false
+  sendingNotifications:false,
+  sendgrid: {
+    key: process.env.SENDGRID_KEY
+  }
 }
