@@ -9,6 +9,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
 require('./src/database/main-database').connect();
+require('./src/database/redis-queue');
 require('./src/models/models')
 require('./src/authentication/passport')
 
