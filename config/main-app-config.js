@@ -11,6 +11,7 @@ module.exports = {
     password:process.env.REDIS_PASSWORD
   },
   sendingNotifications:true,
+  sendingEmails:true,
   sendgrid: {
     key: process.env.SENDGRID_KEY
   }
