@@ -178,7 +178,7 @@ const parseItemNotifications = async (listId) => {
   let itemNotifications = await NotificationModel.find({
     "data.listId": new ObjectId(listId),
     type: {
-      $in: ['item-created', 'item-updated']
+      $in: ['item-created', 'item-updated','item-deleted']
     }
   }).sort({ dateCreated: 1 })//sort by oldest first, makes our logic easier down the line
 
@@ -201,15 +201,15 @@ const parseItemNotifications = async (listId) => {
     let item = await ItemModel.findOne({
       _id: new ObjectId(itemId)
     })
-    if (!item) {
-      continue;
-    }
+    
     //loop over each notification in this group
     groupedItemNotifications[key].forEach(notification => {
       if (notification.type == 'item-created') {
         parseItemCreated(finalParsedObject, item)
       } else if (notification.type == 'item-updated') {
         parseItemUpdated(finalParsedObject, item, notification)
+      } else if (notification.type == 'item-deleted') {
+        finalParsedObject = parseItemDeleted(finalParsedObject, notification)
       }
     })
   }
@@ -219,6 +219,7 @@ const parseItemNotifications = async (listId) => {
 
 //item created is easy, we just return the item that was created and the action of 'create'
 const parseItemCreated = (finalParsedObject, item) => {
+  if(!item){return;}
   //since we have sorted by oldest first, there should never be an update before an add
   finalParsedObject.push({
     action: 'create',
@@ -226,9 +227,25 @@ const parseItemCreated = (finalParsedObject, item) => {
   });
 }
 
+//we return a new list as the filter will break the reference on finalParsedObject
+const parseItemDeleted = (finalParsedObject, notification) => {
+  //we want to remove all notifications that this item has 
+  let newObject = finalParsedObject.filter(parsedObject=> parsedObject.item._id != notification.data.itemId);
+  
+  //since we have sorted by oldest first, there should never be an update after a delete
+  newObject.push({
+    action: 'delete',
+    item: notification.data.item
+  });
+  return newObject;
+}
+
+
 //update is harder as there could be X updates before we send the notification. We want the final payload
 //to show only the NEWEST update on each field
 const parseItemUpdated = (finalParsedObject, item, notification) => {
+  if(!item){return;}
+
   let before = {};
   //see if there is already a parsed notification for this item
   let foundIndex = -1;

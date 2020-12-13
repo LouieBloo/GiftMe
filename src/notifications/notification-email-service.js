@@ -41,6 +41,7 @@ module.exports.sendListChangedEmail = async (listNotification) => {
   let itemChanges = [];
   let tempCreated = [];
   let tempUpdated = [];
+  let tempDeleted = [];
   if (listNotification.itemNotifications) {
     listNotification.itemNotifications.forEach(itemNotification => {
       let updates = [];
@@ -60,6 +61,11 @@ module.exports.sendListChangedEmail = async (listNotification) => {
           action: (itemNotification.action + "d").toUpperCase(),
           name: itemNotification.item.name,
           updates: updates
+        })
+      }else if(itemNotification.action == 'delete'){
+        tempDeleted.push({
+          action: (itemNotification.action + "d").toUpperCase(),
+          name: itemNotification.item.name
         })
       } else {
         //each item before change
@@ -81,8 +87,9 @@ module.exports.sendListChangedEmail = async (listNotification) => {
   }
 
   //want the creates to go first
-  itemChanges = tempCreated.concat(tempUpdated);
+  itemChanges = tempCreated.concat(tempUpdated.concat(tempDeleted));
 
+  console.log(itemChanges)
   sendEmail(listNotification,listChanges,itemChanges)
 
 }
