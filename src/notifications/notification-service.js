@@ -28,6 +28,27 @@ module.exports.itemCreated = async(item,list)=>{
   queueService.listUpdated(list._id);
 }
 
+//When a wishlist item is deleted
+module.exports.itemDeleted = async(item,list)=>{
+  if(!mainConfig.sendingNotifications){return;}
+  //if no subscribers return
+  if(!list.subscribers.length > 0){return;}
+
+  //create the new list item
+  let notification = new NotificationModel();
+  notification.type = "item-deleted";
+  notification.data = {item:item,itemId:new ObjectId(item._id),listId:new ObjectId(list._id)};
+
+  await notification.save().then(async (data) => {
+    //we are independant of any route, dont do anything
+  }).catch(async (err) => {
+    console.error("Error creating item created notification: ",err);
+  });
+
+  //schedule a queued notification
+  queueService.listUpdated(list._id);
+}
+
 //When a wishlist item is updated
 module.exports.itemUpdated = async(newItem,beforeItem)=>{
   if(!mainConfig.sendingNotifications){return;}
