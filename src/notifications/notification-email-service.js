@@ -39,6 +39,8 @@ module.exports.sendListChangedEmail = async (listNotification) => {
   }
   //item changes
   let itemChanges = [];
+  let tempCreated = [];
+  let tempUpdated = [];
   if (listNotification.itemNotifications) {
     listNotification.itemNotifications.forEach(itemNotification => {
       let updates = [];
@@ -53,6 +55,12 @@ module.exports.sendListChangedEmail = async (listNotification) => {
             after: parseKey(key, itemNotification.item)
           })
         })
+
+        tempCreated.push({
+          action: (itemNotification.action + "d").toUpperCase(),
+          name: itemNotification.item.name,
+          updates: updates
+        })
       } else {
         //each item before change
         for (let key in itemNotification.before) {
@@ -62,15 +70,18 @@ module.exports.sendListChangedEmail = async (listNotification) => {
             after: parseKey(key, itemNotification.item)
           });
         }
+
+        tempUpdated.push({
+          action: (itemNotification.action + "d").toUpperCase(),
+          name: itemNotification.item.name,
+          updates: updates
+        })
       }
-      itemChanges.push({
-        action: (itemNotification.action + "d").toUpperCase(),
-        name: itemNotification.item.name,
-        updates: updates
-      })
     });
   }
 
+  //want the creates to go first
+  itemChanges = tempCreated.concat(tempUpdated);
 
   sendEmail(listNotification,listChanges,itemChanges)
 
@@ -89,6 +100,9 @@ const sendEmail = async(listNotification,listChanges,itemChanges)=>{
 const parseKey = (key, object) => {
   if (key == 'finishDate') {
     return moment(object[key]).format("MM/DD/YYYY")
+  }else if(key == 'link' && object[key]){
+    let difference = 50-object[key].length;
+    return object[key].substring(0,object[key].length + (difference >= 0 ? 0 : difference)) + (difference < 0 ? "..." : "")
   }
   return object[key]
 }
