@@ -8,7 +8,8 @@ module.exports = {
   redis:{
     host: process.env.REDIS_HOST,
     port:process.env.REDIS_PORT,
-    password:process.env.REDIS_PASSWORD
+    password:process.env.REDIS_PASSWORD,
+    queuePrependName:process.env.REDIS_QUEUE_PREPEND || 'DEV'
   },
   sendingNotifications:true,
   sendingEmails:true,

@@ -7,7 +7,7 @@ if(!mainConfig.sendingNotifications){
   return;
 }
 
-const queue = new Queue('notification', {
+const queue = new Queue('notification' + mainConfig.redis.queuePrependName, {
   redis: {
     host: mainConfig.redis.host,
     port: mainConfig.redis.port,
@@ -18,5 +18,6 @@ const queue = new Queue('notification', {
   removeOnFailure: true
 });
 console.log("Connecting queue?")
+
 
 module.exports.notificationQueue = queue;
