@@ -44,7 +44,6 @@ module.exports.iconNames = [
   'library_music',
   'audiotrack',
   'vpn_key',
-  'games',
   'gamepad',
   'golf_course',
   'checkroom',
