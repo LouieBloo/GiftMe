@@ -12,6 +12,8 @@ module.exports.templateIds = templateIds;
 
 module.exports.sendEmail = async (to, subject, templateId, dynamicTemplateData = null) => {
 
+  if(!config.sendingEmails){return;}
+
   //to is an array of strings
   if(!to){
     return
