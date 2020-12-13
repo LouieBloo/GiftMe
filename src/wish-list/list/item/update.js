@@ -53,6 +53,9 @@ module.exports.handler = async (req, res, next) => {
 
   //notification service needs to know to create an update notification
   notificationService.itemUpdated(updatedItem,copy);
+  //remove the claimed user so the owner of the list doesnt know who bought it
+  updatedItem = updatedItem.toObject();
+  delete(updatedItem.claimedUser);
 
   return {status:200,response:updatedItem}
 }
