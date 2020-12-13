@@ -3,7 +3,8 @@ const config = require('../../config/main-app-config')
 sgMail.setApiKey(config.sendgrid.key);
 
 const templateIds = {
-  listUpdateEmailId: "d-f76fb236ed934f49be4fc6df86dbe006"
+  listUpdate:"d-dd9033bf94d84aada6da0704462421a1",
+  listUpdateEmailId: "d-f76fb236ed934f49be4fc6df86dbe006",
 }
 const from = "admin@gimmie.gifts"
 
@@ -25,7 +26,7 @@ module.exports.sendEmail = async (to, subject, templateId, dynamicTemplateData =
   const msg = {
     personalizations: personalizations,
     from: from,
-    subject: subject,
+    subject: subject || "nothing",
     template_id: templateId,
     dynamic_template_data: dynamicTemplateData,
   };

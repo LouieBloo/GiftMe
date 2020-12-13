@@ -28,4 +28,5 @@ schema.methods.removeSubscriber = function (userId) {
   this.subscribers = this.subscribers.filter(subscriber => subscriber.userId != userId);
 };
 
+
 module.exports = mongoose.model('wishlist',schema);

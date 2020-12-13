@@ -4,8 +4,9 @@ const ListModel = mongoose.model('wishlist');
 const ItemModel = mongoose.model('wishlist_item');
 const NotificationModel = mongoose.model('notifications');
 const notificationQueue = require('../database/redis-queue').notificationQueue;
+const NotificationEmailService = require('../notifications/notification-email-service');
 
-const itemDelayTimeInSeconds = 2;
+const itemDelayTimeInSeconds = 60 * 20;
 
 /**
  * takes in a listId, will check to see if something is queued for that list and queues it if there is not, or restarts it if there is
@@ -59,7 +60,7 @@ notificationQueue.process(async (job) => {
   //find the list in the jobs data field
   let targetList = await ListModel.findOne({
     _id: new ObjectId(job.data.listId)
-  }).catch(async (err) => {
+  }).populate({path:"owner",select:'name'}).catch(async (err) => {
     console.log("process notification error: ", err)
   });
   //set the lists pending notification id to null so listUpdated knows 
@@ -72,17 +73,37 @@ notificationQueue.process(async (job) => {
    * 3. Send the email to the subscribers
    */
   let parsedNotifications = await parseNotifications(targetList);
-  console.log(parsedNotifications)
+  await NotificationEmailService.sendListChangedEmail(parsedNotifications)
 
   //idk if we need this but keepin it for now
   return true;
 });
 
 //call our respective parsers and join together their output
+// {
+//   list: {
+//     items: [
+//       5fceff3901235316999d08d6,
+//       5fcefb8c01235316999d08c5,
+//       5fcef2ec4d916114f4b184f2
+//     ],
+//     _id: 5fcef2de4d916114f4b184f0,
+//     subscribers: [ [Object] ],
+//     dateCreated: 2020-12-08T03:28:30.611Z,
+//     owner: {_id:5fbc7ea11c91cb015e47820a,name:'Luke'},
+//     __v: 42,
+//     address: '3710 Cedargate Way',
+//     name: 'TEST 123',
+//     finishDate: 2020-12-09T08:00:00.000Z,
+//     pendingNotificationJobId: null
+//   },
+//   listNotification:  { action: 'update', before: {} } ,
+//   itemNotifications: [ { action: 'update', item: [Object], before: [Object] } ]
+// }
 const parseNotifications = async (list) => {
   let allParsedNotifications = {
     list: list,
-    listNotifications: null,
+    listNotification: null,
     itemNotifications: null
   };
 
@@ -90,7 +111,7 @@ const parseNotifications = async (list) => {
   allParsedNotifications.itemNotifications = parsedItemNotifications;
 
   let parsedListNotifications = await parseListNotifications(list);
-  allParsedNotifications.listNotifications = parsedListNotifications;
+  allParsedNotifications.listNotification = parsedListNotifications;
 
   //delete notifications from db
   await NotificationModel.deleteMany({ "data.listId": new ObjectId(list._id) });
@@ -122,7 +143,7 @@ const parseListNotifications = async (list) => {
     }
   })
 
-  return [finalObject];
+  return finalObject;
 }
 
 /**
