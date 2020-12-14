@@ -89,7 +89,6 @@ module.exports.sendListChangedEmail = async (listNotification) => {
   //want the creates to go first
   itemChanges = tempCreated.concat(tempUpdated.concat(tempDeleted));
 
-  console.log(itemChanges)
   sendEmail(listNotification,listChanges,itemChanges)
 
 }
@@ -100,7 +99,8 @@ const sendEmail = async(listNotification,listChanges,itemChanges)=>{
     listOwnerName: listNotification.list.owner.name,
     listName:listNotification.list.name,
     listChanges:listChanges,
-    itemChanges:itemChanges
+    itemChanges:itemChanges,
+    listId:listNotification.list._id
   })
 }
 
