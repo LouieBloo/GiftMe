@@ -24,7 +24,7 @@ module.exports.handler = async (req, res, next) => {
   }
 
   //clear the claimed user
-  targetItem.claimedUser = undefined;
+  targetItem.unClaim()
 
   await targetItem.save().then(async(data)=>{
   }).catch(async (err) => {

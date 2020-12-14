@@ -14,6 +14,9 @@ const updateItem = require('../src/wish-list/list/item/update');
 const deleteItem = require('../src/wish-list/list/item/delete');
 const claimItem = require('../src/wish-list/list/item/claim');
 const unClaimItem = require('../src/wish-list/list/item/un-claim');
+const getClaimed = require('../src/wish-list/list/item/getClaimed');
+const purchaseItem = require('../src/wish-list/list/item/purchase');
+const unPurchaseItem = require('../src/wish-list/list/item/un-purchase');
 
 const addSubscriber = require('../src/wish-list/list/subscribers/add-subscriber');
 const deleteSubscriber = require('../src/wish-list/list/subscribers/delete-subscriber');
@@ -33,6 +36,9 @@ router.patch('/item/:id',[tokenValidator],routeManager(updateItem));
 router.delete('/item/:id',[tokenValidator],routeManager(deleteItem));
 router.patch('/item/:id/claim',[tokenValidator],routeManager(claimItem));
 router.patch('/item/:id/unclaim',[tokenValidator],routeManager(unClaimItem));
+router.get('/item/claimed',[tokenValidator],routeManager(getClaimed));
+router.patch('/item/:id/purchase',[tokenValidator],routeManager(purchaseItem));
+router.patch('/item/:id/unpurchase',[tokenValidator],routeManager(unPurchaseItem));
 //items icons
 router.get('/item/icons',routeManager(getIcons));
 //subscribers
