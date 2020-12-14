@@ -5,8 +5,7 @@ const AddSubscriber = require('../subscribers/add-subscriber');
 
 module.exports.validation = [
   check('id').trim().isLength({ min: 2, max: 60 }).withMessage("Invalid Item Id"),
-  check('force').trim().isBoolean().withMessage("Force is a boolean").optional(),
-  check('message').trim().isLength({ min: 2, max: 200 }).withMessage("Invalid Message").optional()
+  check('force').trim().isBoolean().withMessage("Force is a boolean").optional()
 ];
 module.exports.handler = async (req, res, next) => {
 
@@ -31,12 +30,7 @@ module.exports.handler = async (req, res, next) => {
     throw({status:405,error:"Item is already claimed"});
   }
 
-  targetItem.claimedUser = {
-    _id: req.credentials._id
-  }
-  if(req.validParams.message){
-    targetItem.claimedUser.message = req.validParams.message;
-  }
+  targetItem.claim(req.credentials._id);
 
   await targetItem.save().then(async(data)=>{
   }).catch(async (err) => {
