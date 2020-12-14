@@ -3,8 +3,7 @@ const config = require('../../config/main-app-config')
 sgMail.setApiKey(config.sendgrid.key);
 
 const templateIds = {
-  listUpdate:"d-dd9033bf94d84aada6da0704462421a1",
-  listUpdateEmailId: "d-f76fb236ed934f49be4fc6df86dbe006",
+  listUpdate:"d-82a008552606427bbc85fc8bfefdd982",
 }
 const from = "admin@gimmie.gifts"
 
