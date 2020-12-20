@@ -27,6 +27,7 @@ schema.methods.claim = function (userId) {
 schema.methods.unClaim = function () {
   this.claimedUser = undefined;
   this.dateClaimed = undefined;
+  this.purchased = undefined;
 };
 
 schema.methods.purchase = function () {
