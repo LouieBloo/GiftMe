@@ -5,6 +5,7 @@ sgMail.setApiKey(config.sendgrid.key);
 const templateIds = {
   listUpdate:"d-dd9033bf94d84aada6da0704462421a1",
   listUpdateEmailId: "d-f76fb236ed934f49be4fc6df86dbe006",
+  resetPassword: "d-11cadf6cc74143608a0d7803b05ea2e7"
 }
 const from = "admin@gimmie.gifts"
 

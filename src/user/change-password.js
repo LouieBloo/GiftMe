@@ -12,9 +12,11 @@ module.exports.handler = async (req, res, next) => {
   let targetUser = await UserModel.findOne({'passwordReset.token': req.validParams.token})
 
   if(!targetUser){
-    throw { status: 404, error: {message: "No email found"}}
+    throw { status: 404, error: {message: "Invalid token."}}
   }
-  targetUser.checkToken(req.validParams.token)
+  if(!targetUser.checkToken(req.validParams.token)){
+      throw { status: 401,  error: {error: {token:{msg:"Token expired." }}}}
+  }
   targetUser.setPassword(req.validParams.password);
 
   await targetUser.save();

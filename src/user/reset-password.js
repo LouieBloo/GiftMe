@@ -13,7 +13,8 @@ module.exports.handler = async (req, res, next) => {
     throw { status: 404, error: {message: "No email found"}}
   }
 
-  targetUser.createPasswordReset();
+  targetUser.resetPassword();
+  targetUser.sendResetPasswordEmail();
 
   await targetUser.save();
 

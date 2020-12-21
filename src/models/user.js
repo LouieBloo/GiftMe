@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const mainConfig = require('../../config/main-app-config');
 const moment = require('moment')
+const emailService = require('../emails/email-service');
 
 var usersSchema = new Schema({
   name: {type:String,required:true},
@@ -47,10 +48,10 @@ usersSchema.methods.generateJwt = function(){
   );
 }
 
-usersSchema.methods.createPasswordReset = function(){
+usersSchema.methods.resetPassword = function(){
   let token = cryptoRandomString({length: 20});
 
-  let newDate = moment(new Date()).add(30, 'seconds').toDate();
+  let newDate = moment(new Date()).add(60, 'minutes').toDate();
 
   this.passwordReset = {
     token: token,
@@ -60,7 +61,7 @@ usersSchema.methods.createPasswordReset = function(){
 };
 
 usersSchema.methods.checkToken = function(token){
-  if(token != this.token){
+  if(token != this.passwordReset.token){
     return false
   }
   if(moment.now() <= this.passwordReset.expirationDate){
@@ -70,6 +71,13 @@ usersSchema.methods.checkToken = function(token){
     return false
   }
 }
+
+usersSchema.methods.sendResetPasswordEmail = async function(){
+
+  await emailService.sendEmail(this.email, null, emailService.templateIds.resetPassword, {resetPasswordUrl:mainConfig.clientUrl+'/reset-password/'+this.passwordReset.token})
+
+}
+
 
 
 module.exports = mongoose.model('users',usersSchema);
