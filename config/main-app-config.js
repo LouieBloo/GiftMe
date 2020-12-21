@@ -15,5 +15,6 @@ module.exports = {
   sendingEmails:true,
   sendgrid: {
     key: process.env.SENDGRID_KEY
-  }
+  },
+  clientUrl: "https://www.gimmie.gifts"
 }
