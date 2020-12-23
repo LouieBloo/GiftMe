@@ -1,5 +1,6 @@
 const emailService = require('../emails/email-service');
 const listService = require('../wish-list/list-service');
+const mainConfig = require('../../config/main-app-config');
 const moment = require('moment');
 //
 // REFERENCE LIST NOTIFICATION PARAMETER
@@ -100,7 +101,7 @@ const sendEmail = async(listNotification,listChanges,itemChanges)=>{
     listName:listNotification.list.name,
     listChanges:listChanges,
     itemChanges:itemChanges,
-    listId:listNotification.list._id
+    listUrl: mainConfig.clientUrl + "/wishlists/" + listNotification.list._id
   })
 }
 
