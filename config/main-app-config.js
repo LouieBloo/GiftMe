@@ -11,8 +11,8 @@ module.exports = {
     password:process.env.REDIS_PASSWORD,
     queuePrependName:process.env.REDIS_QUEUE_PREPEND || 'DEV'
   },
-  sendingNotifications:true,
-  sendingEmails:true,
+  sendingNotifications:false,
+  sendingEmails:false,
   sendgrid: {
     key: process.env.SENDGRID_KEY
   },
